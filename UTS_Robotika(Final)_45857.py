@@ -49,14 +49,14 @@ class robot(turtle.Turtle):
                 print('FINISHED')
                 stop()                                      # Break loop
 
-            if (x_robot, y_robot+grid) in walls:            # Jika ada tembok di kiri (ada di list tembok)
-                if(x_robot+grid, y_robot) not in walls:     # Jika tidak ada tembok di deopan (tidak ada list tembok)
+            if (x_robot, y_robot+grid) not in walls:        # Jika tidak ada tembok di kiri (ada di list tembok)
+                self.left(90)                               # Putar ke kiri 90 derajar
+                self.forward(grid)                          # Maju sejauh satu langkah
+            else:                                           # Jika ada tembok di kiri
+                if(x_robot+grid, y_robot) not in walls:     # Jika tidak ada tembok di depan (tidak ada list tembok)
                     self.forward(grid)                      # Maju sejauh grid
                 else:                                       # Jika ada tembok di depan
                     self.right(90)                          # Putar ke kanan 90 derajat
-            else:                                           # Jika tidak ada tembok di kiri
-                self.left(90)                               # Putar ke kiri 90 derajar
-                self.forward(grid)                          # Maju sejauh satu langkah
 
     def go_right(self):
         if (self.heading() == 180):                         # Jika robot ngarah ke barat
@@ -67,14 +67,14 @@ class robot(turtle.Turtle):
                 print('FINISHED')
                 stop()                                      # Break loop
 
-            if (x_robot, y_robot-grid) in walls:
+            if (x_robot, y_robot-grid) not in walls:
+                self.left(90)                               # Putar ke kiri 90 derajar
+                self.forward(grid)                          # Maju sejauh satu langkah
+            else:                                           # Jika  ada tembok di kiri
                 if(x_robot-grid, y_robot) not in walls:
                     self.forward(grid)
                 else:
                     self.right(90)
-            else:                                           # Jika tidak ada tembok di kiri
-                self.left(90)                               # Putar ke kiri 90 derajar
-                self.forward(grid)                          # Maju sejauh satu langkah
 
     def go_up(self):
         if (self.heading() == 90):
@@ -85,14 +85,14 @@ class robot(turtle.Turtle):
                 print('FINISHED')
                 stop()
             
-            if (x_robot-grid, y_robot) in walls:
+            if (x_robot-grid, y_robot) not in walls:
+                self.left(90)
+                self.forward(grid)
+            else:
                 if(x_robot, y_robot+grid) not in walls:
                     self.forward(grid)
                 else:
                     self.right(90)
-            else:
-                self.left(90)
-                self.forward(grid)
 
     def go_down(self):
         if (self.heading() == 270):
@@ -103,15 +103,19 @@ class robot(turtle.Turtle):
                 print('FINISHED')
                 stop()
 
-            if (x_robot+grid, y_robot) in walls:
-                if (x_robot, y_robot-grid) not in walls:
+            #if (not((x_robot+grid, y_robot) in walls)) and ((x_robot, y_robot-grid) not in walls):
+            #    self.forward(grid)
+            if (x_robot+grid, y_robot) not in walls and (x_robot, y_robot-grid) not in walls and (x_robot-grid, y_robot) not in walls and (x_robot+grid, y_robot+grid) not in walls:
+                self.forward(grid) # jika tidak ada tembok di kiri, kanan, dan belakang kiri
+            else:
+                if (x_robot+grid, y_robot) not in walls:
+                    self.left(90)
                     self.forward(grid)
                 else:
-                    self.right(90)
-            
-            else:
-                self.left(90)
-                self.forward(grid)
+                    if (x_robot, y_robot-grid) not in walls:
+                        self.forward(grid)
+                    else:
+                        self.right(90)
 
 # bentuk matrix
 
@@ -119,28 +123,28 @@ box = [
 "+++++++++++++++++++++++++++++",
 "+        +                  +",
 "+        +                  +",
-"+        +  +               +",
-"++++++   +  +               +",
-"e  +     +  +       +++++++++",
-"+  +     +  ++++            +",
-"+  +     +  +               +",
-"+  +     +  +               +",
-"+  +        +               +",
-"+  ++++     +++++++++++++++++",
-"+     +                     +",
-"+     +                     +",
-"++++  +        +            +",
-"+  +  +       s+            +",
-"+  +  +        +        +++++",
-"+  +  ++++++++++   ++++++   +",
+"+        +                  +",
+"+++++++  +                  +",
+"e     +      ++++   +++++++++",
+"+     +      +              +",
+"+     +      +              +",
+"+     +      +              +",
+"+     +      +              +",
+"+     +      ++++++++++++++++",
+"+     +        +   +        +",
+"+     +        +   +        +",
+"++++  +                     +",
+"+  +  +       s             +",
+"+  +  +        +   +        +",
+"+  +  ++++++++++   ++++++++++",
 "+  +                        +",
 "+  +                        +",
 "+  +  +++++++++++++++++++++++",
 "+  +  +           +         +",
 "+  +  +                     +",
-"+  +  +++++                 +",
 "+  +  +                     +",
-"+              ++++         +",
+"+  +  +++++   +++++         +",
+"+                 +         +",
 "+                 +         +",
 "+                 +         +",
 "+                 +         +",
@@ -170,9 +174,9 @@ def setupWall(box):
 run = True
 
 def stop():
-    run = False
-    win.exitonclick()
-    sys.exit()
+    run = False                                         # break infinite loop jika terpenuhi
+    win.exitonclick()                   
+    sys.exit()                      
 
 wall_set = wall()
 robot = robot()
@@ -183,7 +187,7 @@ finish = []
 
 setupWall(box)
 
-while run:
+while run:                                              # infinite loop sampai fungsi stop dieksekusi atau finish tercapai
     robot.go_right()
     robot.go_down()
     robot.go_left()
